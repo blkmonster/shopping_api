@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyc.yl.dao.CategoryDao">
+
+  <resultMap id="BaseResultMap" type="com.lyc.yl.entity.Category" >
+    <result column="id" property="id" />
+    <result column="name" property="name" />
+    <result column="keywords" property="keywords" />
+    <result column="desc" property="desc" />
+    <result column="pid" property="pid" />
+    <result column="icon_url" property="iconUrl" />
+    <result column="level" property="level" />
+    <result column="sort_order" property="sortOrder" />
+    <result column="add_time" property="addTime" />
+    <result column="update_time" property="updateTime" />
+    <result column="deleted" property="deleted" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+            id,
+            `name`,
+            keywords,
+            `desc`,
+            pid,
+            icon_url,
+            `level`,
+            sort_order,
+            add_time,
+            update_time
+    </sql>
+
+  <insert id="insert" useGeneratedKeys="true" keyColumn="id" keyProperty="id" parameterType="com.lyc.yl.entity.Category">
+    INSERT INTO category
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="null != name and '' != name">
+        name,
+      </if>
+      <if test="null != keywords and '' != keywords">
+        keywords,
+      </if>
+      <if test="null != desc and '' != desc">
+        `desc`,
+      </if>
+      <if test="null != pid">
+        pid,
+      </if>
+      <if test="null != iconUrl and '' != iconUrl">
+        icon_url,
+      </if>
+      <if test="null != level and '' != level">
+        `level`,
+      </if>
+      <if test="null != sortOrder">
+        sort_order,
+      </if>
+      <if test="null != addTime">
+        add_time,
+      </if>
+      <if test="null != updateTime">
+        update_time
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="null != name and '' != name">
+        #{name},
+      </if>
+      <if test="null != keywords and '' != keywords">
+        #{keywords},
+      </if>
+      <if test="null != desc and '' != desc">
+        #{desc},
+      </if>
+      <if test="null != pid">
+        #{pid},
+      </if>
+      <if test="null != iconUrl and '' != iconUrl">
+        #{iconUrl},
+      </if>
+      <if test="null != level and '' != level">
+        #{level},
+      </if>
+      <if test="null != sortOrder">
+        #{sortOrder},
+      </if>
+      <if test="null != addTime">
+        #{addTime},
+      </if>
+      <if test ='null != updateTime'>
+        #{updateTime}
+      </if>
+    </trim>
+  </insert>
+
+  <delete id="deleteAll" >
+        DELETE FROM category
+  </delete>
+
+  <update id="deletedById" >
+    UPDATE category
+    <set>
+      deleted = 1
+    </set>
+    WHERE id = #{id}
+  </update>
+
+  <update id="update" parameterType="com.lyc.yl.entity.Category">
+    UPDATE category
+    <set>
+      <if test="null != name and '' != name">name = #{name},</if>
+      keywords = #{keywords},
+      `desc` = #{desc},
+      pid = #{pid},
+      <if test="null != iconUrl and '' != iconUrl">icon_url = #{iconUrl},</if>
+      <if test="null != level and '' != level">`level` = #{level},</if>
+      <if test="null != sortOrder">sort_order = #{sortOrder},</if>
+      update_time = #{updateTime}
+    </set>
+    WHERE id = #{id}
+  </update>
+
+
+  <select id="query" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List" />
+    FROM category
+    WHERE
+        <if test="null != name and '' != name">name like concat('%', #{name}, '%') and </if>
+        <if test="null != keywords and '' != keywords">keywords like concat('%', #{keywords}, '%') and</if>
+        <if test="null != desc and '' != desc">`desc` like concat('%', #{desc}, '%') and</if>
+        <if test="null != pid">pid = #{pid} and</if>
+        <if test="null != iconUrl and '' != iconUrl">icon_url = #{iconUrl} and</if>
+        <if test="null != level and '' != level">`level` = #{level} and</if>
+        <if test="null != sortOrder">sort_order = #{sortOrder} and</if>
+        deleted = 0
+  </select>
+
+  <select id="pageListCount" resultType="java.lang.Integer">
+    SELECT count(1)
+    FROM category
+    where deleted = 0
+  </select>
+
+
+</mapper>

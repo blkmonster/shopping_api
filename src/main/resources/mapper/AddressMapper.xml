@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyc.yl.dao.AddressDao">
+
+  <resultMap id="BaseResultMap" type="com.lyc.yl.entity.Address" >
+    <result column="id" property="id" />
+    <result column="name" property="name" />
+    <result column="sex" property="sex" />
+    <result column="user_id" property="userId" />
+    <result column="province" property="province" />
+    <result column="city" property="city" />
+    <result column="county" property="county" />
+    <result column="address_detail" property="addressDetail" />
+    <result column="area_code" property="areaCode" />
+    <result column="tel" property="tel" />
+    <result column="is_default" property="isDefault" />
+    <result column="add_time" property="addTime" />
+    <result column="update_time" property="updateTime" />
+    <result column="deleted" property="deleted" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+                id,
+                name,
+                sex,
+                user_id,
+                province,
+                city,
+                county,
+                address_detail,
+                area_code,
+                tel,
+                is_default,
+                add_time,
+                update_time,
+                deleted
+  </sql>
+
+  <insert id="insert" useGeneratedKeys="true" keyColumn="id" keyProperty="id" parameterType="com.lyc.yl.entity.Address">
+    INSERT INTO address
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="null != name and '' != name">
+        name,
+      </if>
+      <if test="null != sex">
+        sex,
+      </if>
+      <if test="null != userId ">
+        user_id,
+      </if>
+      <if test="null != province and '' != province">
+        province,
+      </if>
+      <if test="null != city and '' != city">
+        city,
+      </if>
+      <if test="null != county and '' != county">
+        county,
+      </if>
+      <if test="null != addressDetail and '' != addressDetail">
+        address_detail,
+      </if>
+      <if test="null != areaCode and '' != areaCode">
+        area_code,
+      </if>
+      <if test="null != tel and '' != tel">
+        tel,
+      </if>
+      <if test="null != isDefault">
+        is_default,
+      </if>
+      <if test="null != addTime">
+        add_time,
+      </if>
+      <if test="null != updateTime">
+        update_time
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="null != name and '' != name">
+        #{name},
+      </if>
+      <if test="null != sex ">
+        #{sex},
+      </if>
+      <if test="null != userId ">
+        #{userId},
+      </if>
+      <if test="null != province and '' != province">
+        #{province},
+      </if>
+      <if test="null != city and '' != city">
+        #{city},
+      </if>
+      <if test="null != county and '' != county">
+        #{county},
+      </if>
+      <if test="null != addressDetail and '' != addressDetail">
+        #{addressDetail},
+      </if>
+      <if test="null != areaCode and '' != areaCode">
+        #{areaCode},
+      </if>
+      <if test="null != tel and '' != tel">
+        #{tel},
+      </if>
+      <if test="null != isDefault ">
+        #{isDefault},
+      </if>
+      <if test="null != addTime ">
+        #{addTime},
+      </if>
+      <if test="null != updateTime ">
+        #{updateTime}
+      </if>
+    </trim>
+  </insert>
+
+  <delete id="delete" >
+    DELETE FROM address
+    WHERE id = #{id}
+  </delete>
+
+  <update id="update" parameterType="com.lyc.yl.entity.Address">
+    UPDATE address
+    <set>
+      <if test="null != name and '' != name">name = #{name},</if>
+      <if test="null != sex ">sex = #{sex},</if>
+      <if test="null != userId ">user_id = #{userId},</if>
+      <if test="null != province and '' != province">province = #{province},</if>
+      <if test="null != city and '' != city">city = #{city},</if>
+      <if test="null != county and '' != county">county = #{county},</if>
+      <if test="null != addressDetail and '' != addressDetail">address_detail = #{addressDetail},</if>
+      <if test="null != areaCode and '' != areaCode">area_code = #{areaCode},</if>
+      <if test="null != tel and '' != tel">tel = #{tel},</if>
+      <if test="null != isDefault">is_default = #{isDefault},</if>
+      <if test="null != addTime">add_time = #{addTime},</if>
+      <if test="null != updateTime">update_time = #{updateTime}</if>
+    </set>
+    WHERE id = #{id} and deleted = 0
+  </update>
+
+
+  <select id="query" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List" />
+    FROM address
+    WHERE
+      <if test="null != id">id = #{id} and</if>
+      <if test="null != userId">user_id = #{userId} and</if>
+      <if test="null != isDefault and null == id">is_default = #{isDefault} and</if>
+      deleted = 0
+  </select>
+
+  <select id="queryList" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List" />
+    FROM address
+    WHERE user_id = #{userId} and deleted = 0
+  </select>
+
+  <select id="pageList" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List" />
+    FROM address
+    LIMIT #{offset}, #{pageSize}
+  </select>
+
+  <select id="pageListCount" resultType="java.lang.Integer">
+    SELECT count(1)
+    FROM address
+  </select>
+
+  <update id="updateSelective" parameterType="com.lyc.yl.entity.Address">
+    UPDATE address
+    <set>
+      <if test="null != isDefault">is_default = #{isDefault},</if>
+      <if test="null != updateTime">update_time = #{updateTime}</if>
+    </set>
+    WHERE user_id = #{userId} and deleted = 0 and is_default = 1
+  </update>
+
+</mapper>

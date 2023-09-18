@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyc.yl.dao.KeywordDao">
+
+    <resultMap id="BaseResultMap" type="com.lyc.yl.entity.Keyword" >
+        <result column="id" property="id" />
+        <result column="keyword" property="keyword" />
+        <result column="value" property="value" />
+        <result column="is_hot" property="isHot" />
+        <result column="is_default" property="isDefault" />
+        <result column="add_time" property="addTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="deleted" property="deleted" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,
+        keyword,
+        value,
+        is_hot,
+        is_default,
+        add_time,
+        update_time,
+        deleted
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyColumn="id" keyProperty="id" parameterType="com.lyc.yl.entity.Keyword">
+        INSERT INTO keyword
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="null != keyword and '' != keyword">
+                keyword,
+            </if>
+            <if test="null != value ">
+                value,
+            </if>
+            <if test="null != isHot ">
+                is_hot,
+            </if>
+            <if test="null != isDefault ">
+                is_default,
+            </if>
+            <if test="null != addTime ">
+                add_time,
+            </if>
+            <if test="null != updateTime ">
+                update_time
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="null != keyword and '' != keyword">
+                #{keyword},
+            </if>
+            <if test="null != value ">
+                #{value},
+            </if>
+            <if test="null != isHot ">
+                #{isHot},
+            </if>
+            <if test="null != isDefault ">
+                #{isDefault},
+            </if>
+            <if test="null != addTime ">
+                #{addTime},
+            </if>
+            <if test="null != updateTime ">
+                #{updateTime}
+            </if>
+        </trim>
+    </insert>
+
+    <delete id="deletedById" >
+        DELETE FROM keyword
+        WHERE id = #{id}
+    </delete>
+
+    <update id="update" parameterType="com.lyc.yl.entity.Keyword">
+        UPDATE keyword
+        <set>
+            <if test="null != keyword and '' != keyword">keyword = #{keyword},</if>
+            <if test="null != value ">value = #{value},</if>
+            <if test="null != isHot ">is_hot = #{isHot},</if>
+            <if test="null != isDefault ">is_default = #{isDefault},</if>
+            <if test="null != addTime ">add_time = #{addTime},</if>
+            <if test="null != updateTime ">update_time = #{updateTime},</if>
+            <if test="null != deleted ">deleted = #{deleted}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+
+    <select id="query" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM keyword
+        WHERE deleted = 0
+            <if test="null != id ">and id = #{id}</if>
+            <if test="null != keyword and '' != keyword">and keyword like concat('%', #{keyword}, '%')</if>
+            <if test="null != value ">and value = #{value}</if>
+            <if test="null != isHot ">and is_hot = #{isHot}</if>
+            <if test="null != isDefault ">and is_default = #{isDefault}</if>
+    </select>
+
+    <select id="pageList" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM keyword
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="pageListCount" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM keyword
+    </select>
+
+</mapper>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyc.yl.dao.HistoryDao">
+
+    <resultMap id="BaseResultMap" type="com.lyc.yl.entity.History" >
+        <result column="id" property="id" />
+        <result column="user_id" property="userId" />
+        <result column="keyword" property="keyword" />
+        <result column="count" property="count" />
+        <result column="add_time" property="addTime" />
+        <result column="deleted" property="deleted" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,
+        user_id,
+        keyword,
+        count,
+        add_time,
+        deleted
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyColumn="id" keyProperty="id" parameterType="com.lyc.yl.entity.History">
+        INSERT INTO history
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="null != userId ">
+                user_id,
+            </if>
+            <if test="null != keyword and '' != keyword">
+                keyword,
+            </if>
+            <if test="null != count ">
+                count,
+            </if>
+            <if test="null != addTime ">
+                add_time
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="null != userId ">
+                #{userId},
+            </if>
+            <if test="null != keyword and '' != keyword">
+                #{keyword},
+            </if>
+            <if test="null != count ">
+                #{count},
+            </if>
+            <if test="null != addTime ">
+                #{addTime}
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="insertOrUpdate" parameterType="com.lyc.yl.entity.History">
+        INSERT INTO history (
+            user_id,
+            keyword,
+            add_time
+        ) VALUES (
+                     #{userId},
+                     #{keyword},
+                     #{addTime}
+                 ) ON DUPLICATE KEY UPDATE
+            count = count + 1
+    </insert>
+
+    <delete id="delete" >
+        DELETE FROM history
+        WHERE id = #{id}
+    </delete>
+
+    <update id="update" parameterType="com.lyc.yl.entity.History">
+        UPDATE history
+        <set>
+            <if test="null != userId ">user_id = #{userId},</if>
+            <if test="null != keyword and '' != keyword">keyword = #{keyword},</if>
+            <if test="null != count ">count = #{count},</if>
+            <if test="null != addTime ">add_time = #{addTime},</if>
+            <if test="null != deleted ">deleted = #{deleted}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+
+    <select id="load" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM history
+        WHERE id = #{id}
+    </select>
+
+    <select id="query" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM history
+        WHERE deleted = 0
+            <if test="null != userId ">and user_id = #{userId}</if>
+            <if test="null != keyword and '' != keyword">and keyword like concat('%', #{keyword}, '%')</if>
+        order by count desc
+    </select>
+
+    <select id="pageList" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM history
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="pageListCount" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM history
+    </select>
+
+</mapper>

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyc.yl.dao.CartDao">
+
+  <resultMap id="BaseResultMap" type="com.lyc.yl.entity.Cart">
+    <result column="id" property="id" />
+    <result column="user_id" property="userId" />
+    <result column="goods_sn" property="goodsSn" />
+    <result column="goods_name" property="goodsName" />
+    <result column="price" property="price" />
+    <result column="number" property="number" />
+    <result column="unit" property="unit" />
+    <result column="checked" property="checked" />
+    <result column="pic_url" property="picUrl" />
+    <result column="add_time" property="addTime" />
+    <result column="update_time" property="updateTime" />
+    <result column="deleted" property="deleted" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+                id,
+                user_id,
+                goods_sn,
+                goods_name,
+                price,
+                number,
+                unit,
+                checked,
+                pic_url,
+                add_time,
+                update_time,
+                deleted
+  </sql>
+
+  <insert id="insert" useGeneratedKeys="true" keyColumn="id" keyProperty="id" parameterType="com.lyc.yl.entity.Cart">
+    INSERT INTO cart
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="null != userId and '' != userId">
+        user_id,
+      </if>
+      <if test="null != goodsSn and '' != goodsSn">
+        goods_sn,
+      </if>
+      <if test="null != goodsName and '' != goodsName">
+        goods_name,
+      </if>
+      <if test="null != price and '' != price">
+        price,
+      </if>
+      <if test="null != number and '' != number">
+        number,
+      </if>
+      <if test="null != unit and '' != unit">
+        unit,
+      </if>
+      <if test="null != checked and '' != checked">
+        checked,
+      </if>
+      <if test="null != picUrl and '' != picUrl">
+        pic_url,
+      </if>
+      <if test="null != addTime and '' != addTime">
+        add_time,
+      </if>
+      <if test="null != updateTime and '' != updateTime">
+        update_time
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="null != userId and '' != userId">
+        #{userId},
+      </if>
+      <if test="null != goodsSn and '' != goodsSn">
+        #{goodsSn},
+      </if>
+      <if test="null != goodsName and '' != goodsName">
+        #{goodsName},
+      </if>
+      <if test="null != price and '' != price">
+        #{price},
+      </if>
+      <if test="null != number and '' != number">
+        #{number},
+      </if>
+      <if test="null != unit and '' != unit">
+        #{unit},
+      </if>
+      <if test="null != checked and '' != checked">
+        #{checked},
+      </if>
+      <if test="null != picUrl and '' != picUrl">
+        #{picUrl},
+      </if>
+      <if test="null != addTime and '' != addTime">
+        #{addTime},
+      </if>
+      <if test="null != updateTime and '' != updateTime">
+        #{updateTime}
+      </if>
+    </trim>
+  </insert>
+
+  <delete id="delete" >
+    DELETE FROM cart
+    WHERE id = #{id}
+  </delete>
+
+  <update id="update" useGeneratedKeys="true" keyColumn="id" keyProperty="id" parameterType="com.lyc.yl.entity.Cart">
+    UPDATE cart
+    <set>
+      <if test="null != userId and '' != userId">user_id = #{userId},</if>
+      <if test="null != goodsSn and '' != goodsSn">goods_sn = #{goodsSn},</if>
+      <if test="null != goodsName and '' != goodsName">goods_name = #{goodsName},</if>
+      <if test="null != price and '' != price">price = #{price},</if>
+      <if test="null != number and '' != number">number = #{number},</if>
+      <if test="null != unit and '' != unit">unit = #{unit},</if>
+      <if test="null != checked and '' != checked">checked = #{checked},</if>
+      <if test="null != picUrl and '' != picUrl">pic_url = #{picUrl},</if>
+      <if test="null != addTime and '' != addTime">add_time = #{addTime},</if>
+      <if test="null != updateTime and '' != updateTime">update_time = #{updateTime},</if>
+      <if test="null != deleted and '' != deleted">deleted = #{deleted}</if>
+    </set>
+    WHERE id = #{id}
+  </update>
+
+  <select id="load" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List" />
+    FROM cart
+    WHERE id = #{id}
+  </select>
+
+  <insert id="insertOrUpdate" parameterType="com.lyc.yl.entity.Cart">
+    INSERT INTO cart (
+      user_id,
+      goods_sn,
+      goods_name,
+      price,
+      unit,
+      pic_url,
+      add_time,
+      update_time,
+      number
+    ) VALUES (
+               #{userId},
+               #{goodsSn},
+               #{goodsName},
+               #{price},
+               #{unit},
+               #{picUrl},
+               #{addTime},
+               #{updateTime},
+               1
+             ) ON DUPLICATE KEY UPDATE
+                                  number = number + 1,
+                                  update_time = #{updateTime},
+                                  user_id = VALUES(user_id),
+                                  goods_sn = VALUES(goods_sn),
+                                  goods_name = VALUES(goods_name),
+                                  price = VALUES(price),
+                                  unit = VALUES(unit),
+                                  checked = VALUES(checked),
+                                  pic_url = VALUES(pic_url),
+                                  add_time = VALUES(add_time)
+  </insert>
+
+  <select id="index" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List" />
+    FROM cart
+    WHERE deleted = 0
+        and user_id = #{userId}
+      <if test="checked != null "> and checked = #{checked}</if>
+  </select>
+
+    <update id="add" useGeneratedKeys="true" keyColumn="id" keyProperty="id" parameterType="com.lyc.yl.entity.Cart">
+        UPDATE cart
+        <set>
+            number = number + 1,
+        </set>
+        WHERE user_id = #{userId} and goods_sn = #{goodsSn} and deleted = 0
+    </update>
+
+    <update id="cut" useGeneratedKeys="true" keyColumn="id" keyProperty="id" parameterType="com.lyc.yl.entity.Cart">
+        UPDATE cart
+        <set>
+            number = number - 1,
+        </set>
+        WHERE user_id = #{userId} and goods_sn = #{goodsSn} and deleted = 0
+    </update>
+
+    <update id="checked"  parameterType="com.lyc.yl.entity.Cart">
+        UPDATE cart
+        <set>
+            <if test="checked == 1">checked = 1,</if>
+            <if test="checked == 0">checked = 0</if>
+        </set>
+        WHERE user_id = #{userId} and deleted = 0
+        <if test="id != null "> and id = #{id}</if>
+    </update>
+
+</mapper>

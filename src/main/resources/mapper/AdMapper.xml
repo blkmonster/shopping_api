@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyc.yl.dao.AdDao">
+
+    <resultMap id="BaseResultMap" type="com.lyc.yl.entity.Ad" >
+        <result column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="content" property="content" />
+        <result column="url" property="url" />
+        <result column="position" property="position" />
+        <result column="link" property="link" />
+        <result column="enabled" property="enabled" />
+        <result column="sort" property="sort" />
+        <result column="add_time" property="addTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="deleted" property="deleted" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,
+                name,
+                content,
+                url,
+                position,
+                link,
+                enabled,
+                sort,
+                add_time,
+                update_time,
+                deleted
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyColumn="id" keyProperty="id" parameterType="com.lyc.yl.entity.Ad">
+        INSERT INTO ad
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="null != name and '' != name">
+                name,
+            </if>
+            <if test="null != content and '' != content">
+                content,
+            </if>
+            <if test="null != url and '' != url">
+                url,
+            </if>
+            <if test="null != position ">
+                position,
+            </if>
+            <if test="null != link and '' != link">
+                link,
+            </if>
+            <if test="null != enabled ">
+                enabled,
+            </if>
+            <if test="null != sort ">
+                sort,
+            </if>
+            <if test="null != addTime ">
+                add_time,
+            </if>
+            <if test="null != updateTime ">
+                update_time
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="null != name and '' != name">
+                #{name},
+            </if>
+            <if test="null != content and '' != content">
+                #{content},
+            </if>
+            <if test="null != url and '' != url">
+                #{url},
+            </if>
+            <if test="null != position ">
+                #{position},
+            </if>
+            <if test="null != link and '' != link">
+                #{link},
+            </if>
+            <if test="null != enabled ">
+                #{enabled},
+            </if>
+            <if test="null != sort ">
+                #{sort},
+            </if>
+            <if test="null != addTime ">
+                #{addTime},
+            </if>
+            <if test="null != updateTime ">
+                #{updateTime}
+            </if>
+        </trim>
+    </insert>
+
+    <delete id="delete" >
+        DELETE FROM ad
+        WHERE id = #{id}
+    </delete>
+
+    <update id="update" parameterType="com.lyc.yl.entity.Ad">
+        UPDATE ad
+        <set>
+            <if test="null != name and '' != name">name = #{name},</if>
+            <if test="null != content and '' != content">content = #{content},</if>
+            <if test="null != url and '' != url">url = #{url},</if>
+            <if test="null != position ">position = #{position},</if>
+            <if test="null != link and '' != link">link = #{link},</if>
+            <if test="null != enabled ">enabled = #{enabled},</if>
+            <if test="null != sort ">sort = #{sort},</if>
+            <if test="null != addTime ">add_time = #{addTime},</if>
+            <if test="null != updateTime ">update_time = #{updateTime},</if>
+            <if test="null != deleted ">deleted = #{deleted}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <update id="deletedById">
+        UPDATE ad
+        <set>
+            deleted = 1
+        </set>
+        WHERE id = #{id}
+    </update>
+
+
+    <select id="query" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM ad
+        WHERE deleted = 0
+            <if test="null != id ">and id = #{id}</if>
+            <if test="null != name and '' != name">and name like concat('%', #{name} ,'%') </if>
+            <if test="null != content and '' != content">and content like concat('%', #{content} ,'%') </if>
+            <if test="null != position ">and position = #{position}</if>
+            <if test="null != enabled ">and enabled = #{enabled}</if>
+        order by sort
+    </select>
+
+    <select id="pageList" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM ad
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="pageListCount" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM ad
+    </select>
+
+</mapper>
